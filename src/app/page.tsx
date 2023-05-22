@@ -6,6 +6,7 @@ import Header from 'src/components/Header'
 import Sidebar from 'src/components/Sidebar'
 import SideBarChatButton from 'src/components/SideBarChatButton'
 import { Chat } from 'src/types/Chat'
+import { openai } from 'src/utils/openai'
 import { v4 as uuid } from 'uuid'
 
 export default function Home() {
@@ -23,21 +24,28 @@ export default function Home() {
     if (AILoading) getAIResponse()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [AILoading])
-  const getAIResponse = () => {
-    setTimeout(() => {
-      const chatListClone = [...chatList]
-      // eslint-disable-next-line prettier/prettier
-      const chatIndex = chatListClone.findIndex((item) => item.id === chatActiveId )
-      if (chatIndex > -1) {
+
+  const getAIResponse = async () => {
+    const chatListClone = [...chatList]
+    const chatIndex = chatListClone.findIndex(
+      (item) => item.id === chatActiveId,
+    )
+
+    if (chatIndex > -1) {
+      const translated = openai.translateMessages(
+        chatListClone[chatIndex].messages,
+      )
+      const response = await openai.generate(translated)
+      if (response) {
         chatListClone[chatIndex].messages.push({
           id: uuid(),
           author: 'ai',
-          body: 'Aqui esta a resposta',
+          body: response,
         })
       }
-      setChatList(chatListClone)
-      setAILoading(false)
-    }, 2000)
+    }
+    setChatList(chatListClone)
+    setAILoading(false)
   }
 
   const openSidebar = () => setSidebarOpened(true)

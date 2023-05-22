@@ -8,8 +8,10 @@ interface Props {
 
 export default function ChatMessageItem({ message }: Props) {
   return (
-    <div className={`py-5 ${message.author === 'ai' && 'bg-gray-600/50'}`}>
-      <div className="m-auto flex max-w-4xl">
+    <div
+      className={`m-auto py-5 ${message.author === 'ai' && 'bg-gray-600/50'}`}
+    >
+      <div className="flex max-w-4xl p-4">
         <div
           className={`mx-4 flex h-10 w-10 items-center justify-center rounded md:ml-0 
           ${message.author === 'ai' ? 'bg-green-900' : 'bg-blue-900'}`}
